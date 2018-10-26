@@ -6,7 +6,8 @@
                         'Elixir.IslandsEngine.Board',
                         'Elixir.IslandsEngine.Coordinate',
                         'Elixir.IslandsEngine.Guesses',
-                        'Elixir.IslandsEngine.Island']},
+                        'Elixir.IslandsEngine.Island',
+                        'Elixir.IslandsEngine.Rules']},
               {registered,[]},
               {vsn,"0.1.0"},
               {mod,{'Elixir.IslandsEngine.Application',[]}}]}.

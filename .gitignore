@@ -23,5 +23,6 @@ erl_crash.dump
 islands_engine-*.tar
 
 # Ignore Visual Studio config.
-.elixir_ls
+/.elixir_ls/
+
 
