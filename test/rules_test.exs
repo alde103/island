@@ -2,6 +2,7 @@ defmodule RulesTest do
   use ExUnit.Case, sync: true
   doctest IslandsEngine
   alias IslandsEngine.{Rules}
+
   setup do
     rules = Rules.new()
     %{rules: rules}
@@ -18,26 +19,28 @@ defmodule RulesTest do
   end
 
   test "players_set stage", state do
-    d_response = {:ok, %Rules{player1: :islands_not_set, player2: :islands_not_set, state: :players_set}}
+    d_response =
+      {:ok, %Rules{player1: :islands_not_set, player2: :islands_not_set, state: :players_set}}
+
     rules = %{state.rules | state: :players_set}
-    assert  d_response == Rules.check(rules, {:position_islands, :player1})
-    assert  d_response == Rules.check(rules, {:position_islands, :player2})
+    assert d_response == Rules.check(rules, {:position_islands, :player1})
+    assert d_response == Rules.check(rules, {:position_islands, :player2})
   end
 
   test "player1_turn transition", state do
     d_response = %Rules{player1: :islands_set, player2: :islands_not_set, state: :players_set}
     rules = %{state.rules | state: :players_set}
     {:ok, response} = Rules.check(rules, {:set_islands, :player1})
-    assert  d_response == response
+    assert d_response == response
     rules = response
     response = Rules.check(rules, {:position_islands, :player1})
-    assert  :error == response
+    assert :error == response
     {:ok, rules} = Rules.check(rules, {:set_islands, :player2})
-    assert  :player1_turn == rules.state
+    assert :player1_turn == rules.state
     response = Rules.check(rules, {:position_islands, :player2})
-    assert  :error == response
+    assert :error == response
     Rules.check(rules, {:set_islands, :player2})
-    assert  :error == response
+    assert :error == response
   end
 
   test "player1/2_turn stage", state do
@@ -69,6 +72,5 @@ defmodule RulesTest do
     assert :error == Rules.check(rules, {:position_islands, :player2})
     assert :error == Rules.check(rules, {:guess_coordinate, :player1})
     assert :error == Rules.check(rules, {:guess_coordinate, :player2})
-
   end
 end

@@ -21,21 +21,20 @@ defmodule IslandsEngine.Board do
   end
 
   @spec all_island_positioned?(any()) :: boolean()
-  def all_island_positioned?(board), do:
-    Enum.all?(Island.types, &(Map.has_key?(board,&1)))
+  def all_island_positioned?(board), do: Enum.all?(Island.types(), &Map.has_key?(board, &1))
 
   @spec guess(any(), IslandsEngine.Coordinate.t()) :: any()
   def guess(board, %Coordinate{} = coordinate) do
     board
-    |>  check_all_islands(coordinate)
-    |>  guess_response(board)
+    |> check_all_islands(coordinate)
+    |> guess_response(board)
   end
 
   defp check_all_islands(board, coordinate) do
-    Enum.find_value(board, :miss, fn {key, island}->
+    Enum.find_value(board, :miss, fn {key, island} ->
       case Island.guess(island, coordinate) do
-        {:hit, island}  -> {key, island}
-        :miss ->  false
+        {:hit, island} -> {key, island}
+        :miss -> false
       end
     end)
   end
@@ -49,21 +48,21 @@ defmodule IslandsEngine.Board do
 
   defp forest_check(board, key) do
     case forested?(board, key) do
-      true  ->  key
-      false ->  :none
+      true -> key
+      false -> :none
     end
   end
 
   defp forested?(board, key) do
     board
-    |>  Map.fetch!(key)
-    |>  Island.forested?()
+    |> Map.fetch!(key)
+    |> Island.forested?()
   end
 
   defp win_check(board) do
     case all_forested?(board) do
-      true  ->  :win
-      false ->  :no_win
+      true -> :win
+      false -> :no_win
     end
   end
 

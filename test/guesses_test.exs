@@ -5,7 +5,7 @@ defmodule GuessesTest do
   alias IslandsEngine.{Coordinate, Guesses}
 
   setup do
-    guesses = Guesses.new
+    guesses = Guesses.new()
 
     {:ok, coord1} = Coordinate.new(1, 1)
     {:ok, coord2} = Coordinate.new(9, 7)
