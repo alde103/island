@@ -1,16 +1,16 @@
 defmodule GameTest do
-  use ExUnit.Case
+  use ExUnit.Case , async: false
   doctest IslandsEngine
   alias IslandsEngine.{Game, Board, Island, Guesses, Rules, Coordinate}
 
   test "Init PID and state" do
-    {:ok, game} = Game.start_link("Alde")
+    {:ok, game} = Game.start_link("Test1")
 
     assert is_pid(game)
 
     state = :sys.get_state(game)
 
-    player1 = %{name: "Alde", board: Board.new(), guesses: Guesses.new()}
+    player1 = %{name: "Test1", board: Board.new(), guesses: Guesses.new()}
     player2 = %{name: nil, board: Board.new(), guesses: Guesses.new()}
     d_response = %{player1: player1, player2: player2, rules: %Rules{}}
 
@@ -18,14 +18,14 @@ defmodule GameTest do
   end
 
   test "Add new player" do
-    {:ok, game} = Game.start_link("Alde")
+    {:ok, game} = Game.start_link("Test2")
     Game.add_player(game, "Dweezil")
     state = :sys.get_state(game)
     assert state.player2.name == "Dweezil"
   end
 
   test "Position island player" do
-    {:ok, game} = Game.start_link("Alde")
+    {:ok, game} = Game.start_link("Test3")
     Game.add_player(game, "Dweezil")
     Game.position_island(game, :player1, :square, 1, 1)
     state = :sys.get_state(game)
@@ -50,7 +50,7 @@ defmodule GameTest do
   end
 
   test "Set all islands" do
-    {:ok, game} = Game.start_link("Alde")
+    {:ok, game} = Game.start_link("Test4")
     Game.add_player(game, "Dweezil")
     Game.position_island(game, :player1, :atoll, 1, 1)
     Game.position_island(game, :player1, :dot, 1, 4)
@@ -64,7 +64,7 @@ defmodule GameTest do
   end
 
   test "Guess coordinate" do
-    {:ok, game} = Game.start_link("Alde")
+    {:ok, game} = Game.start_link("Test5")
     assert :error == Game.guess_coordinate(game, :player1, 1, 1)
     Game.add_player(game, "Dweezil")
     Game.position_island(game, :player1, :dot, 1, 1)
@@ -84,9 +84,23 @@ defmodule GameTest do
   end
 
   test "register genserver name" do
-    via = Game.via_tuple("Lena")
+    via = Game.via_tuple("Test6")
     {:ok, pid} = GenServer.start_link(Game, "Lena", name: via)
-    resp = Game.start_link("Lena")
+    resp = Game.start_link("Test6")
     assert resp == {:error, {:already_started, pid}}
+  end
+
+  test "child specs" do
+    resp = Game.child_spec(["nombre"])
+    d_resp =
+      %{
+        id: IslandsEngine.Game,
+        restart: :transient,
+        shutdown: 5000,
+        start: {IslandsEngine.Game, :start_link, []},
+        type: :worker
+      }
+
+    assert resp == d_resp
   end
 end

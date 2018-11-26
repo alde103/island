@@ -9,11 +9,13 @@ defmodule IslandsEngine.Application do
     # List all child processes to be supervised
     children = [
       # Starts a worker by calling: IslandsEngine.Worker.start_link(arg)
-      {Registry, keys: :unique, name: Registry.Game}
+      {Registry, keys: :unique, name: Registry.Game},
+      IslandsEngine.GameSupervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
     # for other strategies and supported options
+    :ets.new(:game_state, [:public, :named_table])
     opts = [strategy: :one_for_one, name: IslandsEngine.Supervisor]
     Supervisor.start_link(children, opts)
   end
