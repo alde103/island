@@ -26,6 +26,12 @@ defmodule IslandsEngine.Game do
   def set_islands(game, player) when player in @players,
     do: GenServer.call(game, {:set_islands, player})
 
+  @spec guess_coordinate(
+          atom() | pid() | {atom(), any()} | {:via, atom(), any()},
+          :player1 | :player2,
+          any(),
+          any()
+        ) :: any()
   def guess_coordinate(game, player, row, col) when player in @players,
     do: GenServer.call(game, {:guess_coordinate, player, row, col})
 
@@ -82,7 +88,7 @@ defmodule IslandsEngine.Game do
          true <- Board.all_island_positioned?(board) do
       state_data
       |> update_rules(rules)
-      |> reply_success(:ok)
+      |> reply_success({:ok, board})
     else
       :error ->
         {:reply, :error, state_data}
